@@ -1,0 +1,108 @@
+<div class="container page-container fade-in">
+      <h1 class="page-title">Shopping Cart</h1>
+
+      <div *ngIf="(cartService.cart$ | async)?.length === 0" class="card empty-cart text-center">
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added any medicines to your cart yet.</p>
+        <button routerLink="/medicines" class="btn btn-primary mt-3">Browse Medicines</button>
+      </div>
+
+      <div class="cart-layout" *ngIf="(cartService.cart$ | async) as cartItems; else empty">
+        <div class="cart-items" *ngIf="cartItems.length > 0">
+          <div class="card item-card" *ngFor="let item of cartItems">
+            <div class="item-img">
+              <img [src]="getImageSrc(item.medicine)" [alt]="item.medicine.name" (error)="handleImageError($event, item.medicine)">
+            </div>
+            
+            <div class="item-details">
+              <h3 [routerLink]="['/medicines', item.medicine.id]" class="clickable">{{ item.medicine.name }}</h3>
+              <p class="category">{{ item.medicine.category }}</p>
+              <span *ngIf="item.medicine.requiresPrescription" class="badge badge-danger">Rx Required</span>
+            </div>
+
+            <div class="item-actions">
+              <div class="price">₹{{ item.medicine.price | number:'1.2-2' }}</div>
+              
+              <div class="quantity-control">
+                <button (click)="updateQuantity(item.medicine.id, item.quantity - 1)" class="btn-qty">-</button>
+                <span class="qty-display">{{ item.quantity }}</span>
+                <button (click)="updateQuantity(item.medicine.id, item.quantity + 1)" 
+                        [disabled]="item.quantity >= item.medicine.stockQuantity" 
+                        class="btn-qty">+</button>
+              </div>
+              
+              <div class="line-total">₹{{ (item.medicine.price * item.quantity) | number:'1.2-2' }}</div>
+              
+              <button (click)="removeItem(item.medicine.id)" class="btn-remove" title="Remove item">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="cart-summary" *ngIf="cartItems.length > 0">
+          <div class="card summary-card">
+            <h3>Order Summary</h3>
+            
+            <div class="summary-row">
+              <span>Items ({{ cartService.getItemCount() }}):</span>
+              <span>₹{{ (cartService.total$ | async) | number:'1.2-2' }}</span>
+            </div>
+            <div class="summary-row">
+              <span>Delivery Charges:</span>
+              <span class="free">FREE</span>
+            </div>
+            <hr>
+            <div class="summary-row total">
+              <span>Total Amount:</span>
+              <span>₹{{ (cartService.total$ | async) | number:'1.2-2' }}</span>
+            </div>
+
+            <form [formGroup]="checkoutForm" (ngSubmit)="placeOrder()" class="checkout-form">
+              <div class="form-group">
+                <label class="form-label">Shipping Address</label>
+                <textarea class="form-control" formControlName="shippingAddress" rows="3" placeholder="Enter delivery address"></textarea>
+                <div class="error-msg" *ngIf="checkoutForm.get('shippingAddress')?.invalid && checkoutForm.get('shippingAddress')?.touched">
+                  Shipping address is required
+                </div>
+              </div>
+
+              <!-- Prescription Selection section if required -->
+              <div *ngIf="cartService.requiresPrescription()" class="prescription-section">
+                <div class="alert alert-warning">
+                  <strong>Prescription Required!</strong> Your cart contains medicines that require a valid prescription.
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Select Approved Prescription</label>
+                  <select class="form-control" formControlName="prescriptionId">
+                    <option value="">-- Select Prescription --</option>
+                    <option *ngFor="let rx of approvedPrescriptions" [value]="rx.id">
+                      Prescription #{{ rx.id }} ({{ rx.uploadedAt | date:'mediumDate' }})
+                    </option>
+                  </select>
+                  <div class="error-msg" *ngIf="checkoutForm.get('prescriptionId')?.invalid && checkoutForm.get('prescriptionId')?.touched">
+                    Please select an approved prescription
+                  </div>
+                  
+                  <div class="mt-2 text-sm">
+                    Don't have one? <a routerLink="/prescription/upload" class="link">Upload Prescription</a>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+                {{ errorMessage }}
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block place-order-btn" [disabled]="checkoutForm.invalid || placingOrder">
+                {{ placingOrder ? 'Processing...' : 'Place Order' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <ng-template #empty></ng-template>
+    </div>
+    
+    <app-loader [show]="placingOrder" message="Placing order..."></app-loader>

@@ -1,0 +1,138 @@
+<app-loader [show]="loading"></app-loader>
+
+    <div class="container page-container fade-in" *ngIf="order && !loading">
+      <div class="breadcrumbs">
+        <a routerLink="/orders">My Orders</a> &gt; <span class="current">Order #{{ order.id }}</span>
+      </div>
+
+      <div class="order-header card">
+        <div class="header-actions">
+          <h1>Order #{{ order.id }}</h1>
+          <div class="header-buttons">
+            <button *ngIf="order.status === 'Pending' || order.status === 'Processing'" 
+                    class="btn btn-outline-danger mr-2" 
+                    (click)="cancelOrder()"
+                    [disabled]="cancelling">
+              <span *ngIf="cancelling" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="margin-right: 5px;"></span>
+              Cancel Order
+            </button>
+            <button *ngIf="order.payment?.status === 'Pending' && order.status !== 'Cancelled'" 
+                    class="btn btn-primary" 
+                    [routerLink]="['/order-confirmation', order.id]">
+              Complete Payment
+            </button>
+          </div>
+        </div>
+        
+        <div class="status-tracker mt-4">
+          <div class="tracker-step" [class.active]="true">
+            <div class="step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg></div>
+            <div class="step-label">Placed<br><small>{{ order.createdAt | date:'short' }}</small></div>
+          </div>
+          <div class="tracker-line" [class.active]="isStatusReached(['Processing', 'Shipped', 'Delivered'])"></div>
+          
+          <div class="tracker-step" [class.active]="isStatusReached(['Processing', 'Shipped', 'Delivered'])">
+            <div class="step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+            <div class="step-label">Processing</div>
+          </div>
+          <div class="tracker-line" [class.active]="isStatusReached(['Shipped', 'Delivered'])"></div>
+          
+          <div class="tracker-step" [class.active]="isStatusReached(['Shipped', 'Delivered'])">
+            <div class="step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+            <div class="step-label">Shipped</div>
+          </div>
+          <div class="tracker-line" [class.active]="isStatusReached(['Delivered'])"></div>
+          
+          <div class="tracker-step" [class.active]="isStatusReached(['Delivered'])">
+            <div class="step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+            <div class="step-label">Delivered</div>
+          </div>
+        </div>
+        
+        <div *ngIf="order.status === 'Cancelled'" class="alert alert-danger mt-4 text-center">
+          This order has been cancelled.
+        </div>
+      </div>
+
+      <div class="split-layout mt-4">
+        <div class="main-col">
+          <div class="card">
+            <h3>Items in this Order</h3>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Medicine</th>
+                    <th class="text-center">Unit Price</th>
+                    <th class="text-center">Quantity</th>
+                    <th class="text-right">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of order.items">
+                    <td>
+                      <div class="item-name" [routerLink]="['/medicines', item.medicineId]">{{ item.medicineName }}</div>
+                    </td>
+                    <td class="text-center">₹{{ item.unitPrice | number:'1.2-2' }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-right"><strong>₹{{ (item.unitPrice * item.quantity) | number:'1.2-2' }}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="order-summary mt-4">
+              <div class="summary-line">
+                <span>Subtotal</span>
+                <span>₹{{ order.totalAmount | number:'1.2-2' }}</span>
+              </div>
+              <div class="summary-line">
+                <span>Shipping</span>
+                <span>Free</span>
+              </div>
+              <hr>
+              <div class="summary-line total">
+                <span>Total Amount</span>
+                <span>₹{{ order.totalAmount | number:'1.2-2' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-col">
+          <div class="card side-card mb-4">
+            <h3>Delivery Details</h3>
+            <p class="mb-0"><strong>Shipping Address:</strong></p>
+            <p class="text-secondary">{{ order.shippingAddress }}</p>
+            
+            <p class="mt-3 mb-0"><strong>Assigned To:</strong></p>
+            <p class="text-secondary">{{ order.userName }} ({{ order.userEmail }})</p>
+          </div>
+
+          <div class="card side-card">
+            <h3>Payment Information</h3>
+            <div *ngIf="order.payment">
+              <p><strong>Status:</strong> 
+                <span class="badge ml-2" [ngClass]="{'badge-success': order.payment.status === 'Success', 'badge-pending': order.payment.status === 'Pending'}">
+                  {{ order.payment.status }}
+                </span>
+              </p>
+              <p><strong>Method:</strong> {{ order.payment.method || 'Not Selected' }}</p>
+              <p *ngIf="order.payment.transactionId"><strong>Txn ID:</strong> <small>{{ order.payment.transactionId }}</small></p>
+              <p *ngIf="order.payment.paidAt"><strong>Paid On:</strong> {{ order.payment.paidAt | date:'medium' }}</p>
+            </div>
+            <div *ngIf="!order.payment">
+              <p class="text-secondary text-center">No payment information available.</p>
+            </div>
+          </div>
+          
+          <div class="card side-card mt-4" *ngIf="order.prescriptionId">
+            <h3>Prescription Attachment</h3>
+            <div class="rx-link text-center">
+              <span class="rx-icon"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6A2 2 0 0 0 4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg></span>
+              <p>Prescription #{{ order.prescriptionId }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

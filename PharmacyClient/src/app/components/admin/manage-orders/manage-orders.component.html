@@ -1,0 +1,63 @@
+<div class="container page-container fade-in">
+      <div class="header-actions">
+        <div>
+          <h1>Manage Orders</h1>
+          <a routerLink="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+      </div>
+
+      <app-loader [show]="loading"></app-loader>
+
+      <div class="card mt-4" *ngIf="!loading">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Items</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of orders">
+                <td><strong>#{{ order.id }}</strong></td>
+                <td>{{ order.createdAt | date:'shortDate' }}</td>
+                <td>{{ order.userName }}</td>
+                <td>{{ order.items.length }} items</td>
+                <td>₹{{ order.totalAmount | number:'1.2-2' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="order.payment?.status === 'Success' ? 'badge-success' : 'badge-pending'">
+                    {{ order.payment?.status || 'Pending' }}
+                  </span>
+                </td>
+                <td>
+                  <select 
+                    class="form-control status-select" 
+                    [ngModel]="order.status" 
+                    (ngModelChange)="updateStatus(order, $event)"
+                    [disabled]="processingId === order.id || order.status === 'Cancelled'">
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </td>
+                <td>
+                   <button class="btn btn-secondary btn-sm" [routerLink]="['/orders', order.id]">View</button>
+                </td>
+              </tr>
+              <tr *ngIf="orders.length === 0">
+                <td colspan="8" class="text-center" style="padding: 2rem;">No orders found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

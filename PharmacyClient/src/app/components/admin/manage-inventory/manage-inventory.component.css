@@ -1,0 +1,21 @@
+.page-container { padding-top: 2rem; padding-bottom: 4rem; }
+    .header-actions { margin-bottom: 1.5rem; }
+    .back-link { font-size: 0.9rem; margin-top: 0.5rem; display: inline-block; }
+    .mt-4 { margin-top: 1.5rem; }
+    .text-center { text-align: center; }
+    .text-danger { color: var(--error-color); }
+    .text-warning { color: #d97706; }
+    
+    .table-responsive { overflow-x: auto; }
+    .table { width: 100%; border-collapse: collapse; }
+    .table th {
+      background-color: #f8fafc; padding: 1rem;
+      border-bottom: 2px solid var(--border-color);
+      text-align: left; font-weight: 600; color: var(--text-secondary);
+    }
+    .table td {
+      padding: 1rem; border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    .badge-pending { background-color: rgba(245, 158, 11, 0.1); color: #d97706; }
+    .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }

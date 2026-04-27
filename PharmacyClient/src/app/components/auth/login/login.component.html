@@ -1,0 +1,64 @@
+<div class="auth-page" id="login-page">
+      <div class="auth-left">
+        <div class="auth-brand">
+          <img src="/assets/logo.png" alt="Medi-fy Logo" class="auth-logo">
+          <span>Medi-fy</span>
+        </div>
+        <div class="auth-left-content">
+          <h2>Welcome back to your trusted pharmacy</h2>
+          <p>Access your orders, prescriptions, and get medicines delivered to your doorstep.</p>
+          <div class="auth-features">
+            <div class="auth-feature">
+              <span class="feature-check">✓</span>
+              <span>500+ verified medicines</span>
+            </div>
+            <div class="auth-feature">
+              <span class="feature-check">✓</span>
+              <span>Expert pharmacist reviews</span>
+            </div>
+            <div class="auth-feature">
+              <span class="feature-check">✓</span>
+              <span>Free delivery on all orders</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-right">
+        <div class="auth-card fade-in">
+          <div class="auth-header">
+            <h2>Sign In</h2>
+            <p>Enter your credentials to continue</p>
+          </div>
+
+          <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input type="email" id="email" class="form-control" formControlName="email" placeholder="you@example.com">
+              <div class="error-msg" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                Please enter a valid email address.
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="password">Password</label>
+              <input type="password" id="password" class="form-control" formControlName="password" placeholder="••••••••">
+              <div class="error-msg" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                Password is required.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-lg" [disabled]="loginForm.invalid || loading" id="login-submit-btn">
+              {{ loading ? 'Signing in...' : 'Sign In' }}
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            <p>Don't have an account? <a routerLink="/register">Create one</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-loader [show]="loading" [overlay]="true" message="Signing in..."></app-loader>

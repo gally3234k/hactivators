@@ -1,0 +1,58 @@
+<div class="container page-container fade-in">
+      <div class="header-actions">
+        <div>
+          <h1>Manage Medicines</h1>
+          <a routerLink="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+        <button class="btn btn-primary">Add New Medicine</button>
+      </div>
+
+      <app-loader [show]="loading"></app-loader>
+
+      <div class="card mt-4" *ngIf="!loading">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Rx</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let med of medicines">
+                <td>#{{ med.id }}</td>
+                <td><strong>{{ med.name }}</strong></td>
+                <td>{{ med.category }}</td>
+                <td>₹{{ med.price | number:'1.2-2' }}</td>
+                <td>
+                  <span [class.text-danger]="med.stockQuantity < 10">{{ med.stockQuantity }}</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="med.requiresPrescription ? 'badge-danger' : 'badge-success'">
+                    {{ med.requiresPrescription ? 'Yes' : 'No' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="med.isAvailable ? 'badge-success' : 'badge-danger'">
+                    {{ med.isAvailable ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td>
+                  <!-- Edit/Delete would navigate to form or open modal -->
+                  <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; margin-right: 5px;">Edit</button>
+                </td>
+              </tr>
+              <tr *ngIf="medicines.length === 0">
+                <td colspan="8" class="text-center" style="padding: 2rem;">No medicines found.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

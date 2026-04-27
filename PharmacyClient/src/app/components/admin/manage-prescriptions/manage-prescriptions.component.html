@@ -1,0 +1,54 @@
+<div class="container page-container fade-in">
+      <div class="header-actions">
+        <div>
+          <h1>Review Prescriptions</h1>
+          <a routerLink="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+        
+        <div class="filter-tabs">
+          <button [class.active]="currentFilter === 'Pending'" (click)="setFilter('Pending')">Pending</button>
+          <button [class.active]="currentFilter === 'Approved'" (click)="setFilter('Approved')">Approved</button>
+          <button [class.active]="currentFilter === 'Rejected'" (click)="setFilter('Rejected')">Rejected</button>
+        </div>
+      </div>
+
+      <app-loader [show]="loading"></app-loader>
+
+      <div class="rx-list mt-4" *ngIf="!loading">
+        <div class="card rx-review-card" *ngFor="let rx of filteredPrescriptions">
+          <div class="rx-header">
+            <h4>Prescription #{{ rx.id }}</h4>
+            <span class="badge" [ngClass]="{
+              'badge-pending': rx.status === 'Pending',
+              'badge-success': rx.status === 'Approved',
+              'badge-danger': rx.status === 'Rejected'
+            }">{{ rx.status }}</span>
+          </div>
+          
+          <div class="rx-details">
+            <p><strong>Customer:</strong> {{ rx.userName }}</p>
+            <p><strong>Uploaded:</strong> {{ rx.uploadedAt | date:'mediumDate' }}</p>
+          </div>
+          
+          <div class="rx-image">
+            <a [href]="getImageUrl(rx.imageUrl)" target="_blank">
+              <img [src]="getImageUrl(rx.imageUrl)" alt="Prescription" (error)="handleImageError($event)">
+              <div class="overlay"><span>Click to Enlarge</span></div>
+            </a>
+          </div>
+          
+          <div class="rx-actions" *ngIf="rx.status === 'Pending'">
+            <button class="btn btn-success btn-sm" (click)="review(rx.id, 'Approved')" [disabled]="processingId === rx.id">
+              {{ processingId === rx.id ? '...' : 'Approve' }}
+            </button>
+            <button class="btn btn-danger btn-sm" (click)="reject(rx.id)" [disabled]="processingId === rx.id">
+              Reject
+            </button>
+          </div>
+        </div>
+        
+        <div *ngIf="filteredPrescriptions.length === 0" class="text-center card" style="padding: 3rem;">
+          No {{ currentFilter.toLowerCase() }} prescriptions found.
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,22 @@
+# Node
+node_modules/
+dist/
+PharmacyClient/.angular/
+
+# .NET
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+PharmacyAPI/appsettings.Development.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Any random SQLite db if applicable
+*.sqlite
+*.db

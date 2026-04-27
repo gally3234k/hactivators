@@ -1,0 +1,99 @@
+.page-container {
+      padding-top: 2rem;
+      padding-bottom: 4rem;
+    }
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+    .mt-3 { margin-top: 1rem; }
+    .mt-4 { margin-top: 1.5rem; }
+    
+    .upload-header {
+      margin-bottom: 3rem;
+    }
+    .upload-header h1 {
+      color: var(--primary-dark);
+    }
+    .upload-header p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+    
+    .upload-card {
+      max-width: 600px;
+    }
+    
+    .drop-zone {
+      border: 2px dashed var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 3rem 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: #f8fafc;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--primary-color);
+      background-color: rgba(46, 125, 50, 0.05);
+    }
+    .file-input {
+      display: none;
+    }
+    .upload-icon {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 1rem;
+      color: var(--primary-light);
+    }
+    .upload-content h3 {
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    .upload-content p {
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .upload-content small {
+      color: #94a3b8;
+    }
+    
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .preview-container img {
+      max-width: 100%;
+      max-height: 300px;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .upload-actions {
+      margin-top: 2rem;
+    }
+    .alert {
+      padding: 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    
+    .upload-guidelines {
+      background-color: #f1f5f9;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+    .upload-guidelines h4 {
+      color: var(--text-primary);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .upload-guidelines ul {
+      padding-left: 1.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    .upload-guidelines li {
+      margin-bottom: 0.5rem;
+    }

@@ -1,0 +1,34 @@
+<div class="medicine-card fade-in" id="medicine-card-{{medicine.id}}">
+      <div class="img-container" [routerLink]="['/medicines', medicine.id]">
+        <img
+          [src]="getImageSrc()"
+          [alt]="medicine.name"
+          (error)="handleImageError($event)"
+          loading="lazy">
+        <div class="card-badges">
+          <span *ngIf="medicine.requiresPrescription" class="badge badge-danger">Rx Required</span>
+          <span *ngIf="!medicine.isAvailable || medicine.stockQuantity <= 0" class="badge badge-danger">Out of Stock</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="category-tag">{{ medicine.category }}</span>
+        <h3 class="title" [routerLink]="['/medicines', medicine.id]">{{ medicine.name }}</h3>
+        <p class="description" *ngIf="medicine.description">{{ medicine.description | slice:0:70 }}{{ medicine.description.length > 70 ? '...' : '' }}</p>
+        <div class="card-footer">
+          <div class="price-info">
+            <span class="price">{{ medicine.price | number:'1.2-2' }}</span>
+            <span class="stock-info" *ngIf="medicine.isAvailable && medicine.stockQuantity > 0 && medicine.stockQuantity <= 20">
+              {{ medicine.stockQuantity }} left
+            </span>
+          </div>
+          <button class="btn btn-primary btn-sm add-btn"
+                  [disabled]="!medicine.isAvailable || medicine.stockQuantity <= 0"
+                  (click)="addToCart($event)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+            Add
+          </button>
+        </div>
+      </div>
+    </div>

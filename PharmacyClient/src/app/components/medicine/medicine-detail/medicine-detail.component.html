@@ -1,0 +1,99 @@
+<app-loader [show]="loading"></app-loader>
+
+    <div class="container page-container fade-in" *ngIf="medicine && !loading" id="medicine-detail-page">
+      <div class="breadcrumbs">
+        <a routerLink="/medicines">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Medicines
+        </a>
+        <span class="separator">/</span>
+        <span>{{ medicine.category }}</span>
+        <span class="separator">/</span>
+        <span class="current">{{ medicine.name }}</span>
+      </div>
+
+      <div class="detail-grid">
+        <div class="image-section">
+          <img
+            [src]="getImageSrc()"
+            [alt]="medicine.name"
+            (error)="handleImageError($event)">
+        </div>
+
+        <div class="info-section">
+          <div class="tags">
+            <span class="badge badge-success">{{ medicine.category }}</span>
+            <span *ngIf="medicine.requiresPrescription" class="badge badge-danger">Rx Required</span>
+          </div>
+
+          <h1 class="detail-title">{{ medicine.name }}</h1>
+          <p class="manufacturer" *ngIf="medicine.manufacturer">By <strong>{{ medicine.manufacturer }}</strong></p>
+
+          <div class="price-box">
+            <div class="price-row">
+              <span class="price-label">Price</span>
+              <span class="price-value">₹{{ medicine.price | number:'1.2-2' }}</span>
+            </div>
+            <div class="stock-status" [class.in-stock]="medicine.stockQuantity > 0 && medicine.isAvailable" [class.out-stock]="medicine.stockQuantity <= 0 || !medicine.isAvailable">
+              <span class="status-dot"></span>
+              {{ medicine.isAvailable && medicine.stockQuantity > 0 ? 'In Stock (' + medicine.stockQuantity + ' available)' : 'Out of Stock' }}
+            </div>
+
+            <div class="action-row" *ngIf="medicine.isAvailable && medicine.stockQuantity > 0">
+              <div class="quantity-selector">
+                <button (click)="decrementQty()" class="qty-btn" [disabled]="quantity <= 1">−</button>
+                <input type="number" [(ngModel)]="quantity" min="1" [max]="Math.min(medicine.stockQuantity, 10)" class="qty-input" readonly>
+                <button (click)="incrementQty()" class="qty-btn" [disabled]="quantity >= Math.min(medicine.stockQuantity, 10)">+</button>
+              </div>
+              <button class="btn btn-primary btn-lg add-to-cart-btn" (click)="addToCart()" id="add-to-cart-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/>
+                </svg>
+                Add to Cart
+              </button>
+            </div>
+          </div>
+
+          <div class="details-card">
+            <div class="tab-header">
+              <h3>Description</h3>
+            </div>
+            <div class="tab-body">
+              <p>{{ medicine.description || 'No description available.' }}</p>
+
+              <div class="specs-grid" *ngIf="medicine.dosage || medicine.packaging">
+                <div class="spec-item" *ngIf="medicine.dosage">
+                  <span class="spec-label">Dosage</span>
+                  <span class="spec-value">{{ medicine.dosage }}</span>
+                </div>
+                <div class="spec-item" *ngIf="medicine.packaging">
+                  <span class="spec-label">Packaging</span>
+                  <span class="spec-value">{{ medicine.packaging }}</span>
+                </div>
+                <div class="spec-item" *ngIf="medicine.manufacturer">
+                  <span class="spec-label">Manufacturer</span>
+                  <span class="spec-value">{{ medicine.manufacturer }}</span>
+                </div>
+                <div class="spec-item">
+                  <span class="spec-label">Prescription</span>
+                  <span class="spec-value">{{ medicine.requiresPrescription ? 'Required' : 'Not Required' }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container fade-in" *ngIf="!medicine && !loading" style="padding: 4rem 0;">
+      <div class="empty-detail">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        <h2>Medicine not found</h2>
+        <p>This medicine may have been removed or is temporarily unavailable.</p>
+        <button class="btn btn-primary" routerLink="/medicines">Browse Medicines</button>
+      </div>
+    </div>

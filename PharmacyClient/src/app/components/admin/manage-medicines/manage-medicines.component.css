@@ -1,0 +1,33 @@
+.page-container { padding-top: 2rem; padding-bottom: 4rem; }
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    .mt-4 { margin-top: 1.5rem; }
+    .text-center { text-align: center; }
+    .text-danger { color: var(--error-color); font-weight: bold; }
+    
+    .table-responsive { overflow-x: auto; }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .table th {
+      background-color: #f8fafc;
+      padding: 1rem;
+      border-bottom: 2px solid var(--border-color);
+      text-align: left;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    .table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }

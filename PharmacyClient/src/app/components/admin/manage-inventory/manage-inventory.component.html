@@ -1,0 +1,55 @@
+<div class="container page-container fade-in">
+      <div class="header-actions">
+        <div>
+          <h1>Inventory Alerts</h1>
+          <a routerLink="/admin/dashboard" class="back-link">← Back to Dashboard</a>
+        </div>
+      </div>
+
+      <app-loader [show]="loading"></app-loader>
+
+      <div class="card mt-4" *ngIf="!loading">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Medicine ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Current Stock</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of alerts">
+                <td>#{{ item.medicineId }}</td>
+                <td><strong>{{ item.medicineName }}</strong></td>
+                <td>{{ item.category }}</td>
+                <td>
+                  <strong [class.text-danger]="item.stockQuantity <= 5" 
+                          [class.text-warning]="item.stockQuantity > 5 && item.stockQuantity <= 10">
+                    {{ item.stockQuantity }}
+                  </strong>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="item.stockQuantity === 0 ? 'badge-danger' : 'badge-pending'">
+                    {{ item.stockQuantity === 0 ? 'Out of Stock' : 'Low Stock' }}
+                  </span>
+                </td>
+                <td>
+                  <!-- Would typically open a restocking modal -->
+                  <button class="btn btn-primary btn-sm">Restock</button>
+                </td>
+              </tr>
+              <tr *ngIf="alerts.length === 0">
+                <td colspan="6" class="text-center" style="padding: 3rem;">
+                  <span style="font-size:3rem; display:block; margin-bottom:1rem;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--success-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+                  No inventory alerts. All medicines are well-stocked.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

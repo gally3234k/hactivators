@@ -1,0 +1,51 @@
+<div class="container page-container fade-in">
+      <div class="header-action">
+        <h1>My Prescriptions</h1>
+        <button class="btn btn-primary" routerLink="/prescription/upload">Upload New</button>
+      </div>
+
+      <app-loader [show]="loading"></app-loader>
+
+      <div *ngIf="!loading && prescriptions.length === 0" class="card empty-state text-center">
+        <span class="empty-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6A2 2 0 0 0 4 4v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </span>
+        <h2>No Prescriptions Yet</h2>
+        <p>Upload a prescription to order medicines that require one.</p>
+        <button class="btn btn-primary mt-3" routerLink="/prescription/upload">Upload Now</button>
+      </div>
+
+      <div class="prescription-grid" *ngIf="!loading && prescriptions.length > 0">
+        <div class="card prescription-card" *ngFor="let rx of prescriptions">
+          <div class="rx-header">
+            <span class="rx-id">#{{ rx.id }}</span>
+            <span class="badge" [ngClass]="{
+              'badge-pending': rx.status === 'Pending',
+              'badge-success': rx.status === 'Approved',
+              'badge-danger': rx.status === 'Rejected'
+            }">{{ rx.status }}</span>
+          </div>
+          
+          <div class="rx-body">
+            <div class="rx-img-container">
+              <img [src]="getImageUrl(rx.imageUrl)" alt="Prescription" (error)="handleImageError($event)">
+            </div>
+            
+            <div class="rx-info">
+              <p><strong>Uploaded:</strong> {{ rx.uploadedAt | date:'mediumDate' }}</p>
+              
+              <div *ngIf="rx.status === 'Rejected'" class="reject-reason">
+                <strong>Reason:</strong>
+                <p>{{ rx.reason || 'No specific reason provided' }}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="rx-footer">
+            <button *ngIf="rx.status === 'Approved'" class="btn btn-primary btn-block btn-sm" routerLink="/cart">Use for Order</button>
+            <p *ngIf="rx.status === 'Pending'" class="text-secondary text-center text-sm">Under Review by Pharmacist</p>
+            <button *ngIf="rx.status === 'Rejected'" class="btn btn-secondary btn-block btn-sm" routerLink="/prescription/upload">Upload Another</button>
+          </div>
+        </div>
+      </div>
+    </div>
